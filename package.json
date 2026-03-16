@@ -1,0 +1,46 @@
+{
+  "name": "novel-platform",
+  "version": "1.0.0",
+  "description": "小牛马小说发布平台 - 支持所有人发布和阅读小说",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:api\"",
+    "dev:web": "cd apps/web && npm run dev",
+    "dev:api": "cd apps/api && npm run dev",
+    "build": "npm run build:web && npm run build:api",
+    "build:web": "cd apps/web && npm run build",
+    "build:api": "cd apps/api && npm run build",
+    "start": "npm run start:web && npm run start:api",
+    "start:web": "cd apps/web && npm run start",
+    "start:api": "cd apps/api && npm run start",
+    "db:migrate": "cd packages/database && npm run migrate",
+    "db:generate": "cd packages/database && npm run generate",
+    "db:studio": "cd packages/database && npm run studio",
+    "db:seed": "cd packages/database && npm run seed",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "init": "npm install && npm run docker:up && npm run db:generate && npm run db:migrate && npm run db:seed"
+  },
+  "keywords": [
+    "novel",
+    "platform",
+    "reading",
+    "writing",
+    "nextjs",
+    "prisma"
+  ],
+  "author": "赚钱小牛马",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prisma": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.9.0"
+  }
+}

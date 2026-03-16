@@ -1,0 +1,217 @@
+// Prisma Schema for Novel Platform
+// 小说平台数据库设计
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== 用户系统 ====================
+
+model User {
+  id            String    @id @default(cuid())
+  openid        String    @unique // 飞书/微信 openid
+  nickname      String    @db.VarChar(50)
+  avatar        String?   @db.VarChar(500)
+  bio           String?   @db.VarChar(500) // 个人简介
+  role          Role      @default(READER) // 用户角色
+  email         String?   @unique @db.VarChar(100)
+  phone         String?   @unique @db.VarChar(20)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // 关联
+  novels        Novel[]
+  comments      Comment[]
+  collections   Collection[]
+  readingHistory ReadingHistory[]
+  likes         Like[]
+
+  @@index([openid])
+  @@index([nickname])
+}
+
+enum Role {
+  READER   // 普通读者
+  AUTHOR   // 认证作者
+  ADMIN    // 管理员
+}
+
+// ==================== 小说管理 ====================
+
+model Novel {
+  id            String    @id @default(cuid())
+  title         String    @db.VarChar(200)
+  description   String    @db.Text // 简介
+  cover         String?   @db.VarChar(500) // 封面图片 URL
+  category      Category  @default(FANTASY)
+  tags          String[]  // 标签数组
+  status        NovelStatus @default(DRAFT)
+  wordCount     Int       @default(0) // 总字数
+  chapterCount  Int       @default(0) // 章节数
+  viewCount     Int       @default(0) // 阅读量
+  collectCount  Int       @default(0) // 收藏量
+  likeCount     Int       @default(0) // 点赞量
+  authorId      String
+  author        User      @relation(fields: [authorId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
+
+  // 关联
+  chapters      Chapter[]
+  comments      Comment[]
+  collections   Collection[]
+  likes         Like[]
+  readingHistory ReadingHistory[]
+
+  @@index([authorId])
+  @@index([category])
+  @@index([status])
+  @@index([title])
+  @@index([tags])
+}
+
+enum Category {
+  FANTASY      // 玄幻
+  URBAN        // 都市
+  ROMANCE      // 言情
+  SCI_FI       // 科幻
+  WUXIA        // 武侠
+  HISTORICAL   // 历史
+  HORROR       // 悬疑灵异
+  GAME         // 游戏
+  SPORTS       // 体育
+  OTHER        // 其他
+}
+
+enum NovelStatus {
+  DRAFT      // 草稿
+  PUBLISHED  // 连载中
+  COMPLETED  // 已完结
+  SUSPENDED  // 暂停
+}
+
+// ==================== 章节管理 ====================
+
+model Chapter {
+  id            String    @id @default(cuid())
+  novelId       String
+  novel         Novel     @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  title         String    @db.VarChar(200)
+  content       String    @db.Text // Markdown 格式
+  wordCount     Int       @default(0)
+  order         Int       // 章节顺序
+  status        ChapterStatus @default(DRAFT)
+  viewCount     Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  publishedAt   DateTime?
+
+  // 关联
+  comments      Comment[]
+  readingHistory ReadingHistory[]
+
+  @@unique([novelId, order])
+  @@index([novelId])
+  @@index([status])
+}
+
+enum ChapterStatus {
+  DRAFT      // 草稿
+  PUBLISHED  // 已发布
+  HIDDEN     // 隐藏
+}
+
+// ==================== 互动功能 ====================
+
+model Comment {
+  id            String    @id @default(cuid())
+  content       String    @db.Text
+  novelId       String?
+  novel         Novel?    @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  chapterId     String?
+  chapter       Chapter?  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  parentId      String?   // 父评论 ID (楼中楼)
+  parent        Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies       Comment[] @relation("CommentReplies")
+  likes         Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([novelId])
+  @@index([chapterId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+model Collection {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novelId       String
+  novel         Novel     @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+
+  @@unique([userId, novelId])
+  @@index([userId])
+  @@index([novelId])
+}
+
+model ReadingHistory {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novelId       String
+  novel         Novel     @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  chapterId     String?
+  chapter       Chapter?  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  lastReadAt    DateTime  @default(now())
+
+  @@unique([userId, novelId])
+  @@index([userId])
+  @@index([novelId])
+}
+
+model Like {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  novelId       String
+  novel         Novel     @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+
+  @@unique([userId, novelId])
+  @@index([userId])
+  @@index([novelId])
+}
+
+// 小说点赞（单独表，避免与 Like 冲突）
+model NovelLike {
+  id            String    @id @default(cuid())
+  userId        String
+  novelId       String
+  createdAt     DateTime  @default(now())
+
+  @@unique([userId, novelId])
+  @@index([userId])
+  @@index([novelId])
+}
+
+// 评论点赞
+model CommentLike {
+  id            String    @id @default(cuid())
+  userId        String
+  commentId     String
+  createdAt     DateTime  @default(now())
+
+  @@unique([userId, commentId])
+  @@index([userId])
+  @@index([commentId])
+}

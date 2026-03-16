@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 数据库
+  postgres:
+    image: postgres:15-alpine
+    container_name: novel-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: novel
+      POSTGRES_PASSWORD: novel123456
+      POSTGRES_DB: novel_platform
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U novel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis 缓存
+  redis:
+    image: redis:7-alpine
+    container_name: novel-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Meilisearch 搜索引擎
+  meilisearch:
+    image: getmeili/meilisearch:v1.6
+    container_name: novel-meilisearch
+    restart: always
+    environment:
+      MEILI_MASTER_KEY: novel_master_key_123
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili_data:/meili_data
+
+  # 应用服务 (开发环境)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: novel-app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://novel:novel123456@postgres:5432/novel_platform
+      - REDIS_URL=redis://redis:6379
+      - MEILI_URL=http://meilisearch:7700
+      - MEILI_KEY=novel_master_key_123
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      meilisearch:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  redis_data:
+  meili_data:
+
+networks:
+  default:
+    name: novel-network

@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* AI 龙虾主题色 */
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    
+    /* 龙虾红 */
+    --primary: 0 84% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 0 84% 50%;
+    
+    /* 海洋蓝 */
+    --secondary: 199 89% 48%;
+    --secondary-foreground: 0 0% 100%;
+    
+    /* 金币黄 */
+    --accent: 45 93% 54%;
+    --accent-foreground: 0 0% 15%;
+    
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 0 84% 60%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --primary: 0 84% 60%;
+    --secondary: 199 89% 48%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* ===== 按钮样式 ===== */
+  .btn-lobster {
+    @apply bg-gradient-to-r from-red-500 to-orange-500 text-white 
+           px-8 py-3 rounded-2xl font-bold
+           shadow-lg shadow-red-500/30 
+           hover:shadow-xl hover:shadow-red-500/40 hover:scale-105
+           active:scale-95 transition-all duration-300;
+  }
+
+  .btn-ocean {
+    @apply bg-gradient-to-r from-cyan-500 to-blue-500 text-white 
+           px-8 py-3 rounded-2xl font-bold
+           shadow-lg shadow-cyan-500/30 
+           hover:shadow-xl hover:shadow-cyan-500/40 hover:scale-105
+           active:scale-95 transition-all duration-300;
+  }
+
+  .btn-gold {
+    @apply bg-gradient-to-r from-yellow-400 to-orange-400 text-white 
+           px-8 py-3 rounded-2xl font-bold
+           shadow-lg shadow-yellow-500/30 
+           hover:shadow-xl hover:shadow-yellow-500/40 hover:scale-105
+           active:scale-95 transition-all duration-300;
+  }
+
+  .btn-outline {
+    @apply border-2 border-red-500 text-red-500 
+           px-8 py-3 rounded-2xl font-bold
+           hover:bg-red-50 dark:hover:bg-red-900/20 
+           active:scale-95 transition-all duration-300;
+  }
+
+  /* ===== 卡片样式 ===== */
+  .novel-card {
+    @apply bg-white dark:bg-gray-800 rounded-3xl overflow-hidden
+           border border-gray-100 dark:border-gray-700
+           shadow-lg hover:shadow-2xl hover:shadow-red-500/20
+           transition-all duration-500 hover:-translate-y-2
+           cursor-pointer;
+  }
+
+  .cover-wrapper {
+    @apply relative w-full aspect-[3/4] overflow-hidden
+           bg-gradient-to-br from-red-400 via-orange-400 to-yellow-400;
+  }
+
+  .feature-card {
+    @apply bg-white dark:bg-gray-800 rounded-3xl p-6
+           border border-gray-100 dark:border-gray-700
+           shadow-lg hover:shadow-2xl hover:shadow-red-500/10
+           hover:-translate-y-2 transition-all duration-500;
+  }
+
+  .stat-card {
+    @apply text-center p-6 rounded-3xl
+           text-white shadow-xl
+           hover:shadow-2xl hover:scale-105
+           transition-all duration-500;
+  }
+
+  /* ===== 标签样式 ===== */
+  .tag-lobster {
+    @apply inline-flex items-center px-3 py-1.5 rounded-full
+           bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300
+           text-xs font-medium border border-red-500/20;
+  }
+
+  .tag-earnings {
+    @apply inline-flex items-center gap-1 px-3 py-1.5 rounded-full
+           bg-gradient-to-r from-yellow-400 to-orange-400
+           text-white text-xs font-bold shadow-md;
+  }
+
+  /* ===== 文字样式 ===== */
+  .text-gradient-lobster {
+    @apply bg-gradient-to-r from-red-500 to-orange-500 
+           bg-clip-text text-transparent;
+  }
+
+  .text-gradient-ocean {
+    @apply bg-gradient-to-r from-cyan-500 to-blue-500 
+           bg-clip-text text-transparent;
+  }
+
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-yellow-400 to-orange-400 
+           bg-clip-text text-transparent;
+  }
+
+  /* ===== 输入框样式 ===== */
+  .input-modern {
+    @apply w-full px-5 py-3 rounded-2xl
+           bg-gray-50 dark:bg-gray-800
+           border-2 border-transparent
+           focus:border-red-500 focus:bg-white
+           dark:focus:bg-gray-900 focus:outline-none
+           focus:ring-4 focus:ring-red-500/20
+           transition-all duration-300;
+  }
+
+  /* ===== 链接样式 ===== */
+  .link-lobster {
+    @apply text-red-500 hover:text-red-600 font-medium
+           transition-colors duration-200;
+  }
+
+  /* ===== 排行榜样式 ===== */
+  .rank-item {
+    @apply flex items-center gap-3 p-3 rounded-xl
+           hover:bg-red-50 dark:hover:bg-gray-700/50
+           transition-colors cursor-pointer;
+  }
+}
+
+/* ===== 动画效果 ===== */
+@layer utilities {
+  @keyframes wave {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-wave {
+    animation: wave 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+  }
+
+  .skeleton {
+    @apply bg-gray-200 dark:bg-gray-700 rounded;
+    background-image: linear-gradient(
+      90deg,
+      rgba(255,255,255,0) 0,
+      rgba(255,255,255,0.2) 20%,
+      rgba(255,255,255,0.5) 60%,
+      rgba(255,255,255,0)
+    );
+    background-size: 200px 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+  }
+}
+
+/* ===== 工具类 ===== */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
