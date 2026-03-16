@@ -36,8 +36,24 @@ export default function Header({ showSearch = true, showDashboard = false }: Hea
                     type="text"
                     placeholder="搜索小说、作者..."
                     className="input-modern w-full"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const query = (e.target as HTMLInputElement).value
+                        if (query) {
+                          window.location.href = `/novels?search=${encodeURIComponent(query)}`
+                        }
+                      }
+                    }}
                   />
-                  <button className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600">
+                  <button 
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500 hover:text-red-600"
+                    onClick={() => {
+                      const input = document.querySelector('.input-modern') as HTMLInputElement
+                      if (input && input.value) {
+                        window.location.href = `/novels?search=${encodeURIComponent(input.value)}`
+                      }
+                    }}
+                  >
                     🔍
                   </button>
                 </div>
